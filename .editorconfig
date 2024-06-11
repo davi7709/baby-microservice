@@ -1,0 +1,9 @@
+root = true
+[*]
+end_of_line = lf
+insert_final_newline = true
+[*.{c,cpp,h,hpp,java,scala,kt,rs,js,sql,yaml,html,jsx,ts,css,scss,less,json,gradle,kts,graphql,graphqls}]
+charset = utf-8
+indent_style = space
+indent_size = 2
+trim_trailing_whitespace = true

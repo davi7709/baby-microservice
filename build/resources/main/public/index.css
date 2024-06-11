@@ -1,0 +1,19 @@
+body {
+    background-color: #efefee;
+    font-family: Calibri, "helvetica neue", "Droid Sans", sans, sans-serif;
+    font-size: 11px;
+}
+
+table {
+  width: 300px;
+}
+
+thead {
+    text-align: left;
+    border-bottom-width: 1px;
+    border-bottom: black;
+}
+
+tfoot {
+  text-align: right;
+}

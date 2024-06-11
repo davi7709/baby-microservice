@@ -1,0 +1,40 @@
+### HEALTH
+GET http://localhost:4567/api/health
+accept: "application/json"
+###
+/
+
+### PEOPLE
+GET http://localhost:4567/api/people
+accept: "application/json"
+###
+/
+
+### PERSON BY ID
+GET http://localhost:4567/api/person/1
+accept: "application/json"
+###
+/
+
+### PRODUCTS
+GET http://localhost:4567/api/product
+accept: "application/json"
+###
+/
+
+### PRODUCT BY ID
+GET http://localhost:4567/api/product/1
+accept: "application/json"
+###
+/
+
+### PRODUCT BY ID
+POST http://localhost:4567/api/product
+accept: "application/json"
+
+{
+  "description": "Apple Macbook Pro 14 , (16 Gb Ram, 1 Tb Ssd) - Prateado",
+  "quantity": 5
+}
+###
+/
