@@ -2,6 +2,7 @@ package corp.lzx.lab.baby.core.server;
 
 import corp.lzx.lab.baby.core.server.health.routes.HealthRoute;
 import corp.lzx.lab.baby.core.service.JsonSerializer;
+import corp.lzx.lab.baby.domain.person.routes.PersonRoute;
 import corp.lzx.lab.baby.domain.product.routes.ProductRoute;
 import corp.lzx.lab.baby.core.util.Message;
 import corp.lzx.lab.baby.domain.product.Product;
@@ -28,6 +29,8 @@ public class Router {
       HealthRoute.handle();
       ProductRoute.handle();
       ProductRoute.handle();
+      PersonRoute.handle();
+      PersonRoute.handle();
     });
 
     after((req, res) -> {

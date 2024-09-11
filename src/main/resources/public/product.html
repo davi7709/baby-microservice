@@ -3,62 +3,62 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cadastramento de Funcionarios</title>
+  <title>Cadastramento de Produtos</title>
   <!-- Importando estilos do Bootstrap -->
   <link rel="stylesheet" href="dist/bootstrap/css/bootstrap.min.css">
 </head>
 <body class="container mt-5">
-<h2>Cadastramento de Funcionarios</h2>
+<h2>Cadastramento de Produtos</h2>
 
 <!-- Formulário para adicionar/editar products -->
-<form id="personForm" class="my-4">
+<form id="productForm" class="my-4">
   <div class="form-group">
-    <input type="text" id="nome" class="form-control" placeholder="Nome" required>
+    <input type="text" id="descricao" class="form-control" placeholder="Descrição" required>
   </div>
   <div class="form-group">
-    <input type="number" id="registro" class="form-control" placeholder="Registro" required>
+    <input type="number" id="quantidade" class="form-control" placeholder="Quantidade" required>
   </div>
   <div class="form-group">
-    <input type="text" id="senha" class="form-control" placeholder="Senha" required>
+    <input type="number" id="valor" class="form-control" placeholder="Valor" required>
   </div>
   <button type="submit" class="btn btn-primary">Cadastrar</button>
   <button type="button" id="cancelBtn" class="btn btn-secondary" style="display: none">Cancelar</button>
 </form>
 
-<!-- Tabela para listar persons -->
+<!-- Tabela para listar products -->
 <table class="table table-bordered">
   <thead>
   <tr>
     <th>ID</th>
-    <th>Nome</th>
-    <th>Registro</th>
-    <th>Senha</th>
+    <th>Descrição</th>
+    <th>Quantidade</th>
+    <th>Valor</th>
     <th>Ações</th>
   </tr>
   </thead>
-  <tbody id="personsTable"></tbody>
+  <tbody id="productsTable"></tbody>
 </table>
 
 <script>
-  // Array para armazenar persons do servidor
-  let persons = [];
+  // Array para armazenar products do servidor
+  let products = [];
   // ID do produto em edição
-  let personAtual = null;
+  let produtoAtual = null;
 
   // Função para exibir products na tabela
-  function displayPersons() {
-      const tbody = document.getElementById("personsTable");
+  function displayProducts() {
+      const tbody = document.getElementById("productsTable");
       tbody.innerHTML = "";
-      persons.forEach((person) => {
+      products.forEach((product) => {
           const row = document.createElement("tr");
           row.innerHTML = `
-              <td>${person.id}</td>
-              <td>${person.name}</td>
-              <td>${product.registry}</td>
-              <td>${product.password}</td>
+              <td>${product.id}</td>
+              <td>${product.description}</td>
+              <td>${product.quantity}</td>
+              <td>${product.price}</td>
               <td>
-                  <button class="btn btn-warning btn-sm" onclick="editPerson(${person.id})">Alterar</button>
-                  <button class="btn btn-danger btn-sm" onclick="deletePerson(${person.id})">Remover</button>
+                  <button class="btn btn-warning btn-sm" onclick="editProduct(${product.id})">Alterar</button>
+                  <button class="btn btn-danger btn-sm" onclick="deleteProduct(${product.id})">Remover</button>
               </td>
           `;
           tbody.appendChild(row);
@@ -66,74 +66,74 @@
   }
 
   // Função para carregar um produto no formulário para edição
-    function editPerson(id) {
-      personAtual = id;
+    function editProduct(id) {
+      produtoAtual = id;
       //localiza produto na tabela
-      const person = persons.find((p) => p.id === id);
-      //document.getElementById("id").value = perso.id;
-      document.getElementById("nome").value = person.name;
-      document.getElementById("registro").value = person.registry;
-      document.getElementById("senha").value = person.password;
+      const product = products.find((p) => p.id === id);
+      //document.getElementById("id").value = product.id;
+      document.getElementById("descricao").value = product.description;
+      document.getElementById("quantidade").value = product.quantity;
+      document.getElementById("valor").value = product.price;
       // Mostra o botão cancelar durante a edição
       document.getElementById("cancelBtn").style.display = "inline-block";
   }
 
   // Função para remover produto do servidor e atualizar a lista
-  function deletePerson(id) {
-      fetch("/api/person/" + id, {
+  function deleteProduct(id) {
+      fetch("/api/product/" + id, {
           method: "DELETE",
       })
       .then(() => {
-          persons = persons.filter((p) => p.id !== id);
-          displayPersons();
+          products = products.filter((p) => p.id !== id);
+          displayProducts();
       })
       .catch((error) => console.error("Error:", error));
   }
 
   // Evento para lidar com o envio do formulário
-  document.getElementById("personForm").addEventListener("submit", function (event) {
+  document.getElementById("productForm").addEventListener("submit", function (event) {
       event.preventDefault();
       // Coleta os valores do formulário
-      const person = {
+      const product = {
           //id: parseInt(document.getElementById("id").value),
-          name: document.getElementById("name").value,
-          registry: parseInt(document.getElementById("registry").value),
-          password: document.getElementById("password").value),
+          description: document.getElementById("descricao").value,
+          quantity: parseInt(document.getElementById("quantidade").value),
+          price: parseFloat(document.getElementById("valor").value),
       };
-      if (personAtual) {
+      if (produtoAtual) {
           // Se estiver editando
-          fetch("/api/person/" + personAtual, {
+          fetch("/api/product/" + produtoAtual, {
               method: "PUT",
               headers: {
                   "Content-Type": "application/json",
               },
-              body: JSON.stringify(person),
+              body: JSON.stringify(product),
           })
           .then((response) => response.json())
           .then((data) => {
-              const index = persons.findIndex((p) => p.id === personAtual);
-              persons[index] = data;
-              displayPersons();
+              const index = products.findIndex((p) => p.id === produtoAtual);
+              products[index] = data;
+              displayProducts();
               // Limpa o formulário e reseta o produto em edição
-              document.getElementById("personForm").reset();
-              personAtual = null;
+              document.getElementById("productForm").reset();
+              produtoAtual = null;
               document.getElementById("cancelBtn").style.display = "none";
           })
           .catch((error) => console.error("Error:", error));
       } else {
           // Se for um novo produto
-          fetch("/api/person", {
+          fetch("/api/product", {
               method: "POST",
               headers: {
                   "Content-Type": "application/json",
               },
-              body: JSON.stringify(person),
+              body: JSON.stringify(product),
           })
           .then((response) => response.json())
           .then((data) => {
-              persons.push(data);
-              displayPersons();
-              document.getElementById("personForm").reset();
+              products.push(data);
+              displayProducts();
+              document.getElementById("productForm").reset();
           })
           .catch((error) => console.error("Error:", error));
       }
@@ -141,17 +141,17 @@
 
   // Cancela a edição e limpa o formulário
   document.getElementById("cancelBtn").addEventListener("click", function () {
-      personAtual = null;
-      document.getElementById("personForm").reset();
+      produtoAtual = null;
+      document.getElementById("productForm").reset();
       this.style.display = "none";
   });
 
   // Carrega products do servidor ao carregar a página
-  fetch("/api/persons")
+  fetch("/api/products")
   .then((response) => response.json())
   .then((data) => {
-      persons = data;
-      displayPersons();
+      products = data;
+      displayProducts();
   })
   .catch((error) => console.error("Error:", error));
 </script>
