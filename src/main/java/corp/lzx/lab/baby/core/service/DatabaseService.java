@@ -19,7 +19,6 @@ public class DatabaseService {
 
   private DatabaseService() {
     var config = new HikariConfig();
-    //config.setJdbcUrl("jdbc:postgresql://postgres.lzx.corp:5432/test");
     config.setJdbcUrl("jdbc:h2:mem:test");
     config.setUsername("postgres");
     config.setPassword("postgres");
@@ -60,7 +59,9 @@ public class DatabaseService {
             """
                 CREATE TABLE IF NOT EXISTS tb_person (
                   id bigint NOT NULL PRIMARY KEY AUTO_INCREMENT,
-                  name varchar(255) NOT NULL
+                  name varchar(255) NOT NULL,
+                  registry varchar(255) NOT NULL,
+                  password varchar(255) NOT NULL
                 );
 
                 CREATE TABLE IF NOT EXISTS tb_product (
@@ -70,10 +71,10 @@ public class DatabaseService {
                   price numeric(20,2) NOT NULL
                 );
 
-                truncate table tb_person;
+                //truncate table tb_person;
                 //truncate table tb_product;
 
-                INSERT INTO tb_person(name) values ('Davi Alves');
+                //INSERT INTO tb_person(name) values ('Davi Alves');
                 //INSERT INTO tb_product(description,quantity, price) values ('iPhone 15 Pro Max', 10, 7000.00);
                 """
           );

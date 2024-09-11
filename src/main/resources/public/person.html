@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastramento de Funcionarios</title>
+  <!-- Importando estilos do Bootstrap -->
+  <link rel="stylesheet" href="dist/bootstrap/css/bootstrap.min.css">
+</head>
+<body class="container mt-5">
+<h2>Cadastramento de Funcionarios</h2>
+
+<!-- Formulário para adicionar/editar products -->
+<form id="personForm" class="my-4">
+  <div class="form-group">
+    <input type="text" id="nome" class="form-control" placeholder="Nome" required>
+  </div>
+  <div class="form-group">
+    <input type="number" id="registro" class="form-control" placeholder="Registro" required>
+  </div>
+  <div class="form-group">
+    <input type="text" id="senha" class="form-control" placeholder="Senha" required>
+  </div>
+  <button type="submit" class="btn btn-primary">Cadastrar</button>
+  <button type="button" id="cancelBtn" class="btn btn-secondary" style="display: none">Cancelar</button>
+</form>
+
+<!-- Tabela para listar persons -->
+<table class="table table-bordered">
+  <thead>
+  <tr>
+    <th>ID</th>
+    <th>Nome</th>
+    <th>Registro</th>
+    <th>Senha</th>
+    <th>Ações</th>
+  </tr>
+  </thead>
+  <tbody id="personsTable"></tbody>
+</table>
+
+<script>
+  // Array para armazenar persons do servidor
+  let persons = [];
+  // ID do produto em edição
+  let personAtual = null;
+
+  // Função para exibir products na tabela
+  function displayPersons() {
+      const tbody = document.getElementById("personsTable");
+      tbody.innerHTML = "";
+      persons.forEach((person) => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+              <td>${person.id}</td>
+              <td>${person.name}</td>
+              <td>${product.registry}</td>
+              <td>${product.password}</td>
+              <td>
+                  <button class="btn btn-warning btn-sm" onclick="editPerson(${person.id})">Alterar</button>
+                  <button class="btn btn-danger btn-sm" onclick="deletePerson(${person.id})">Remover</button>
+              </td>
+          `;
+          tbody.appendChild(row);
+      });
+  }
+
+  // Função para carregar um produto no formulário para edição
+    function editPerson(id) {
+      personAtual = id;
+      //localiza produto na tabela
+      const person = persons.find((p) => p.id === id);
+      //document.getElementById("id").value = perso.id;
+      document.getElementById("nome").value = person.name;
+      document.getElementById("registro").value = person.registry;
+      document.getElementById("senha").value = person.password;
+      // Mostra o botão cancelar durante a edição
+      document.getElementById("cancelBtn").style.display = "inline-block";
+  }
+
+  // Função para remover produto do servidor e atualizar a lista
+  function deletePerson(id) {
+      fetch("/api/person/" + id, {
+          method: "DELETE",
+      })
+      .then(() => {
+          persons = persons.filter((p) => p.id !== id);
+          displayPersons();
+      })
+      .catch((error) => console.error("Error:", error));
+  }
+
+  // Evento para lidar com o envio do formulário
+  document.getElementById("personForm").addEventListener("submit", function (event) {
+      event.preventDefault();
+      // Coleta os valores do formulário
+      const person = {
+          //id: parseInt(document.getElementById("id").value),
+          name: document.getElementById("name").value,
+          registry: parseInt(document.getElementById("registry").value),
+          password: document.getElementById("password").value),
+      };
+      if (personAtual) {
+          // Se estiver editando
+          fetch("/api/person/" + personAtual, {
+              method: "PUT",
+              headers: {
+                  "Content-Type": "application/json",
+              },
+              body: JSON.stringify(person),
+          })
+          .then((response) => response.json())
+          .then((data) => {
+              const index = persons.findIndex((p) => p.id === personAtual);
+              persons[index] = data;
+              displayPersons();
+              // Limpa o formulário e reseta o produto em edição
+              document.getElementById("personForm").reset();
+              personAtual = null;
+              document.getElementById("cancelBtn").style.display = "none";
+          })
+          .catch((error) => console.error("Error:", error));
+      } else {
+          // Se for um novo produto
+          fetch("/api/person", {
+              method: "POST",
+              headers: {
+                  "Content-Type": "application/json",
+              },
+              body: JSON.stringify(person),
+          })
+          .then((response) => response.json())
+          .then((data) => {
+              persons.push(data);
+              displayPersons();
+              document.getElementById("personForm").reset();
+          })
+          .catch((error) => console.error("Error:", error));
+      }
+  });
+
+  // Cancela a edição e limpa o formulário
+  document.getElementById("cancelBtn").addEventListener("click", function () {
+      personAtual = null;
+      document.getElementById("personForm").reset();
+      this.style.display = "none";
+  });
+
+  // Carrega products do servidor ao carregar a página
+  fetch("/api/persons")
+  .then((response) => response.json())
+  .then((data) => {
+      persons = data;
+      displayPersons();
+  })
+  .catch((error) => console.error("Error:", error));
+</script>
+
+<!-- Bibliotecas JS auxiliares (Bootstrap requer jQuery e Popper.js) -->
+<script src="dist/jquery/js/jquery-3.7.1.min.js"></script>
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script> -->
+<script src="dist/bootstrap/js/bootstrap.min.js"></script>
+</body>
+</html>

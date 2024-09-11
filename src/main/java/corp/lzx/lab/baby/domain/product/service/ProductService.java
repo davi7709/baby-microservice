@@ -52,7 +52,6 @@ public class ProductService {
     return updateProduct(Long.valueOf(id), product);
   }
 
-
   public boolean deleteProduct(String id){
     return deleteProduct(Long.valueOf(id));
   }
